@@ -1,0 +1,51 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: proxy_user
+      POSTGRES_PASSWORD: proxy_password
+      POSTGRES_DB: proxy_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U proxy_user -d proxy_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  proxy_retriever:
+    build:
+      context: .
+      dockerfile: Dockerfile.retriever
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: proxy_db
+      DB_USER: proxy_user
+      DB_PASSWORD: proxy_password
+    restart: unless-stopped
+
+  proxy_tester:
+    build:
+      context: .
+      dockerfile: Dockerfile.tester
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: proxy_db
+      DB_USER: proxy_user
+      DB_PASSWORD: proxy_password
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
