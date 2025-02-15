@@ -1,11 +1,15 @@
-.PHONY: install compile sync clean update run test
+.PHONY: install compile sync clean update run test dev-install sync-deps
 
-# Install pip-tools
+# Install pip-tools and dev dependencies
 install-tools:
-	pip install pip-tools
+	pip install -e ".[dev]"
+
+# Sync requirements.in with pyproject.toml and compile requirements.txt
+sync-deps:
+	python scripts/sync_dependencies.py
 
 # Compile requirements
-compile:
+compile: sync-deps
 	pip-compile --generate-hashes requirements.in
 
 # Install dependencies
@@ -14,13 +18,13 @@ sync:
 
 # Clean up Python cache files
 clean:
-	find . -type d -name "__pycache__" -exec rm -r {} +
-	find . -type f -name "*.pyc" -delete
-	find . -type f -name "*.pyo" -delete
+	powershell -Command "Get-ChildItem -Path . -Filter '__pycache__' -Recurse -Directory | Remove-Item -Recurse -Force"
+	powershell -Command "Get-ChildItem -Path . -Filter '*.pyc' -Recurse -File | Remove-Item -Force"
+	powershell -Command "Get-ChildItem -Path . -Filter '*.pyo' -Recurse -File | Remove-Item -Force"
 
 # Update all packages to latest versions
-update:
-	pip-compile --upgrade requirements.in
+update: sync-deps
+	pip-compile --upgrade --generate-hashes requirements.in
 	pip-sync requirements.txt
 
 # Run the example
@@ -30,5 +34,13 @@ run:
 # Install and setup everything
 setup: install-tools compile sync
 
+# Install package in development mode with test dependencies
+dev-install:
+	pip install -e ".[test]"
+
+# Run tests
+test: dev-install
+	pytest
+
 # Default target
-all: setup 
+all: setup dev-install 

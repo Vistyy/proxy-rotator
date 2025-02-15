@@ -27,6 +27,10 @@ wheels/
 .installed.cfg
 *.egg
 
+# Generated requirements
+requirements.in
+requirements.txt
+
 # IDE
 .idea/
 .vscode/
@@ -53,4 +57,9 @@ local_settings.py
 *.tmp
 *.bak
 *.swp
-*~ 
+*~
+
+# Coverage
+.coverage
+coverage.xml
+htmlcov/ 
