@@ -1,5 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# encoding: utf-8
 """
 Proxy management services package
 """
-
