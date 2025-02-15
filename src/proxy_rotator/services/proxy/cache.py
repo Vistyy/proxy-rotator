@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from typing import Dict, Optional
 
+
 class ProxyCache:
     def __init__(self, cache_duration: timedelta = timedelta(minutes=10)):
         self.cache_duration = cache_duration
@@ -18,4 +19,4 @@ class ProxyCache:
 
     def clear(self):
         """Clear all cache entries"""
-        self.last_fetch_time.clear() 
+        self.last_fetch_time.clear()

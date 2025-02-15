@@ -5,8 +5,6 @@ WORKDIR /app
 # Install system dependencies required for psycopg2
 RUN apt-get update && \
   apt-get install -y --no-install-recommends \
-  gcc \
-  python3-dev \
   libpq-dev \
   && rm -rf /var/lib/apt/lists/*
 
@@ -14,11 +12,15 @@ RUN apt-get update && \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy Alembic configuration
+# Copy application code
 COPY alembic.ini .
 COPY migrations migrations/
+COPY src src/
 
-# Copy application code
-COPY . .
+# Add src to Python path
+ENV PYTHONPATH=/app/src
 
-CMD ["python", "proxy_tester_app.py"] 
+# Create entrypoint script
+RUN printf '#!/bin/sh\necho "Running database migrations..."\nalembic upgrade head\necho "Starting service..."\nexec python -m proxy_rotator.apps.retriever\n' > /entrypoint.sh && chmod +x /entrypoint.sh
+
+CMD ["/entrypoint.sh"] 

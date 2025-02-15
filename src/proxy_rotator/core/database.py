@@ -1,11 +1,11 @@
-from sqlalchemy import create_engine, func, select, text
+import logging
+from datetime import datetime, timedelta
+from typing import List, Optional
+from sqlalchemy import create_engine, select, func, text
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
-from datetime import datetime, timedelta
-from settings.db_settings import DB_CONFIG
-from db.models import Base, Proxy, ProxyStats, ProxySource
-import logging
-from typing import List, Optional
+from proxy_rotator.core.models import Base, Proxy, ProxyStats, ProxySource
+from proxy_rotator.config.db_settings import DB_CONFIG
 
 
 class ProxyDatabase:
@@ -95,7 +95,6 @@ class ProxyDatabase:
             min_check_time = datetime.now() - timedelta(hours=max_age_hours)
 
             stmt = select(Proxy.proxy_url).join(ProxyStats).where(
-                Proxy.is_active == True,
                 ProxyStats.last_check >= min_check_time,
                 ProxyStats.failure_count <= max_failures,
                 (ProxyStats.success_count * 1.0 /

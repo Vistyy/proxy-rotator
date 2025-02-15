@@ -1,15 +1,18 @@
 import re
-from typing import Optional
 from abc import ABC, abstractmethod
+
 
 class ProxyValidatorInterface(ABC):
     @abstractmethod
     def is_valid_format(self, proxy: str) -> bool:
+        """Validate proxy format"""
         pass
 
     @abstractmethod
     def add_protocol(self, proxy: str) -> str:
+        """Add protocol if missing"""
         pass
+
 
 class ProxyValidator(ProxyValidatorInterface):
     def __init__(self):
@@ -27,4 +30,4 @@ class ProxyValidator(ProxyValidatorInterface):
         """Add http protocol if missing"""
         if not proxy.startswith(('http://', 'https://')):
             return f"http://{proxy}"
-        return proxy 
+        return proxy

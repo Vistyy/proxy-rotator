@@ -1,8 +1,8 @@
 import asyncio
 import logging
-from services.http_client import AiohttpClient
-from services.proxy_tester import ProxyTester
-from db.proxy_db import ProxyDatabase
+from proxy_rotator.services.http.client import AiohttpClient
+from proxy_rotator.services.proxy.tester import ProxyTester
+from proxy_rotator.core.database import ProxyDatabase
 
 # Configure logging
 logging.basicConfig(

@@ -20,35 +20,34 @@ class ProxySource(Base):
 
 
 class Proxy(Base):
+    """Model for storing proxy information"""
     __tablename__ = 'proxies'
 
     id = Column(Integer, primary_key=True)
-    address = Column(String, nullable=False, unique=True)
-    protocol = Column(String, nullable=False)
-    last_checked = Column(DateTime, nullable=True)
-    last_successful = Column(DateTime, nullable=True)
-    success_count = Column(Integer, default=0)
-    failure_count = Column(Integer, default=0)
-    success_rate = Column(Float, default=0.0)
-    response_time = Column(Float, nullable=True)  # in seconds
+    address = Column(String, nullable=False)
+    protocol = Column(String, default='http')
+    source_id = Column(Integer, ForeignKey('proxy_sources.id'))
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    source_id = Column(Integer, ForeignKey('proxy_sources.id'), nullable=True)
+    last_checked = Column(DateTime, nullable=True)
 
-    stats = relationship("ProxyStats", back_populates="proxy", uselist=False)
+    source = relationship("ProxySource", backref="proxies")
 
 
 class ProxyStats(Base):
+    """Model for storing proxy statistics"""
     __tablename__ = 'proxy_stats'
 
     id = Column(Integer, primary_key=True)
     proxy_id = Column(Integer, ForeignKey('proxies.id'))
     success_count = Column(Integer, default=0)
     failure_count = Column(Integer, default=0)
-    last_check = Column(DateTime(timezone=True))
-    last_status = Column(Boolean)
+    last_success = Column(DateTime, nullable=True)
+    last_failure = Column(DateTime, nullable=True)
+    last_check = Column(DateTime, nullable=True)
+    average_response_time = Column(Float, nullable=True)
 
-    proxy = relationship("Proxy", back_populates="stats")
+    proxy = relationship("Proxy", backref="stats")
 
     @property
     def success_rate(self):

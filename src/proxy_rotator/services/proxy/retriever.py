@@ -3,10 +3,10 @@ import asyncio
 from typing import List, Set, Dict
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
-from services.http_client import HttpClientInterface
-from services.proxy_validator import ProxyValidatorInterface
-from services.proxy_cache import ProxyCache
-from db.proxy_db import ProxyDatabase
+from proxy_rotator.services.http.client import HttpClientInterface
+from proxy_rotator.services.proxy.validator import ProxyValidatorInterface
+from proxy_rotator.services.proxy.cache import ProxyCache
+from proxy_rotator.core.database import ProxyDatabase
 
 
 class ProxyRetriever:

@@ -2,9 +2,9 @@ import asyncio
 import logging
 from datetime import datetime
 from typing import List
-from settings.proxy_settings import PROXY_CONFIG, PROXY_TEST
-from services.http_client import HttpClientInterface
-from db.proxy_db import ProxyDatabase
+from proxy_rotator.config.proxy_settings import PROXY_CONFIG, PROXY_TEST
+from proxy_rotator.services.http.client import HttpClientInterface
+from proxy_rotator.core.database import ProxyDatabase
 
 
 class ProxyTester:

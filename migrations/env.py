@@ -7,7 +7,7 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from db.models import Base
+from proxy_rotator.core.database import Base
 
 # Load environment variables
 load_dotenv()
